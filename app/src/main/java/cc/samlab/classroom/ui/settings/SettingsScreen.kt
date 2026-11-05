@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
 import cc.samlab.classroom.ui.components.EntryRow
 import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageTitle
 
 @Composable
 fun SettingsScreen(
@@ -28,18 +29,18 @@ fun SettingsScreen(
 ) {
     var showAddressDialog by rememberSaveable { mutableStateOf(false) }
     Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
+        modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
     ) {
-        PageHeader(stringResource(R.string.settings), onBack)
+        PageHeader(onBack)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
+        PageTitle(stringResource(R.string.settings))
         EntryRow(
             title = stringResource(R.string.backend_address),
             subtitle = address.ifEmpty { stringResource(R.string.not_configured) },
             icon = R.drawable.ic_server,
             onClick = { showAddressDialog = true },
         )
+        }
     }
     if (showAddressDialog) {
         BackendAddressDialog(

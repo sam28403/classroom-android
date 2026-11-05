@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import cc.samlab.classroom.R
 import cc.samlab.classroom.ui.components.EntryRow
+import cc.samlab.classroom.ui.components.UserAvatar
 import cc.samlab.classroom.ui.theme.ClassroomTheme
 
 @Composable
@@ -37,6 +38,8 @@ fun HomeScreen(
     onLogin: () -> Unit,
     onSettings: () -> Unit,
     username: String? = null,
+    avatar: String? = null,
+    server: String = "",
     onCourses: () -> Unit = {},
     ongoingCourses: @Composable () -> Unit = {},
 ) {
@@ -69,6 +72,9 @@ fun HomeScreen(
             title = username ?: stringResource(R.string.login),
             icon = R.drawable.ic_person,
             onClick = onLogin,
+            leadingContent = if (username == null) null else {
+                { UserAvatar(server, avatar, username) }
+            },
         )
         ongoingCourses()
         EntryRow(

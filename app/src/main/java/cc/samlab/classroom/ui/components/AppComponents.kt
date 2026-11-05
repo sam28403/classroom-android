@@ -24,33 +24,31 @@ import cc.samlab.classroom.R
 
 @Composable
 fun PageHeader(
-    title: String,
     onBack: () -> Unit,
     action: @Composable () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    painterResource(R.drawable.ic_arrow_back),
-                    contentDescription = stringResource(R.string.back),
-                )
-            }
-            action()
+        IconButton(onClick = onBack) {
+            Icon(
+                painterResource(R.drawable.ic_arrow_back),
+                contentDescription = stringResource(R.string.back),
+            )
         }
-        Text(
-            title,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(horizontal = 8.dp).semantics { heading() },
-        )
+        action()
     }
+}
+
+@Composable
+fun PageTitle(title: String) {
+    Text(
+        title,
+        style = MaterialTheme.typography.displaySmall,
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 24.dp).semantics { heading() },
+    )
 }
 
 @Composable
@@ -60,6 +58,7 @@ fun EntryRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    leadingContent: (@Composable () -> Unit)? = null,
 ) {
     Surface(
         onClick = onClick,
@@ -72,7 +71,9 @@ fun EntryRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Surface(
+            if (leadingContent != null) {
+                leadingContent()
+            } else Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.secondaryContainer,
             ) {

@@ -39,6 +39,17 @@ class ClassroomApi(private val context: Context, private val server: String) {
 
     suspend fun captcha(): String = request("/captcha").getString("image")
 
+    suspend fun avatarRequests(): org.json.JSONArray = request("/requests").optJSONArray("items")
+        ?: throw IOException(context.getString(R.string.invalid_server_response))
+
+    suspend fun uploadAvatar(bytes: ByteArray): Long {
+        val upload = AvatarUpload(bytes)
+        val result = request("/avatar-requests", raw = upload.body,
+            contentType = upload.contentType, expectedStatus = 202)
+        return result.optLong("requestId", -1).takeIf { it > 0 }
+            ?: throw IOException(context.getString(R.string.invalid_server_response))
+    }
+
     suspend fun login(username: String, password: String, code: String): ClassroomUser =
         user(request("/android/auth/login", JSONObject().apply {
             put("username", username.trim())
@@ -65,24 +76,25 @@ class ClassroomApi(private val context: Context, private val server: String) {
         )
     }
 
-    private suspend fun request(path: String, body: JSONObject? = null): JSONObject =
+    private suspend fun request(path: String, body: JSONObject? = null, raw: ByteArray? = null,
+        contentType: String? = null, expectedStatus: Int? = null): JSONObject =
         mutex.withLock {
             withContext(Dispatchers.IO) {
                 val uri = URI("$server/api$path")
                 val connection = uri.toURL().openConnection() as HttpURLConnection
                 try {
                     connection.connectTimeout = 10_000
-                    connection.readTimeout = 15_000
+                    connection.readTimeout = if (raw != null) 60_000 else 15_000
                     connection.instanceFollowRedirects = false
-                    connection.requestMethod = if (body == null) "GET" else "POST"
+                    connection.requestMethod = if (body == null && raw == null) "GET" else "POST"
                     connection.setRequestProperty("Accept", "application/json")
                     cookies.headers(uri).forEach { (name, values) ->
                         connection.setRequestProperty(name, values.joinToString("; "))
                     }
-                    if (body != null) {
+                    if (body != null || raw != null) {
                         connection.doOutput = true
-                        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                        connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
+                        connection.setRequestProperty("Content-Type", contentType ?: "application/json; charset=utf-8")
+                        connection.outputStream.use { it.write(raw ?: body.toString().toByteArray(Charsets.UTF_8)) }
                     }
                     val status = connection.responseCode
                     cookies.update(uri, connection.headerFields)
@@ -101,6 +113,9 @@ class ClassroomApi(private val context: Context, private val server: String) {
                             },
                             result.optString("code"),
                         )
+                    }
+                    if (expectedStatus != null && status != expectedStatus) {
+                        throw IOException(context.getString(R.string.invalid_server_response))
                     }
                     result
                 } finally {

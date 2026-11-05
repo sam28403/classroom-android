@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
 import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageTitle
 import cc.samlab.classroom.data.Course
 import androidx.compose.material3.Card
 
@@ -35,15 +36,14 @@ fun CoursesScreen(
     onCourse: (Course) -> Unit,
     onRefresh: () -> Unit,
 ) {
+    Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+        PageHeader(onBack) { CourseRefreshButton(!state.loading, onRefresh) }
     LazyColumn(
-        Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(horizontal = 20.dp),
+        Modifier.weight(1f).padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            PageHeader(stringResource(R.string.courses), onBack) {
-                CourseRefreshButton(!state.loading, onRefresh)
-            }
+            PageTitle(stringResource(R.string.courses))
         }
         when {
             state.loading -> item {
@@ -84,5 +84,6 @@ fun CoursesScreen(
                 }
             }
         }
+    }
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
 import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageTitle
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -31,15 +32,14 @@ fun CourseDetailsScreen(
 ) {
     val course = state.schedule.courses.find { it.id == courseId }
     val sessions = state.schedule.sessions.filter { it.courseId == courseId }
+    Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+        PageHeader(onBack) { CourseRefreshButton(!state.loading, onRefresh) }
     LazyColumn(
-        Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(horizontal = 20.dp),
+        Modifier.weight(1f).padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
-            PageHeader(stringResource(R.string.course_details), onBack) {
-                CourseRefreshButton(!state.loading, onRefresh)
-            }
+            PageTitle(stringResource(R.string.course_details))
         }
         when {
             state.loading -> item { LoadingIndicator() }
@@ -75,5 +75,6 @@ fun CourseDetailsScreen(
                 }
             }
         }
+    }
     }
 }

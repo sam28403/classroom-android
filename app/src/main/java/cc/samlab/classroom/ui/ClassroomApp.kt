@@ -29,6 +29,7 @@ import cc.samlab.classroom.ui.login.AccountScreen
 import cc.samlab.classroom.ui.login.LoginScreen
 import cc.samlab.classroom.ui.login.LoginState
 import cc.samlab.classroom.ui.settings.SettingsScreen
+import cc.samlab.classroom.ui.avatar.AvatarEditorScreen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import java.time.Instant
@@ -37,7 +38,7 @@ import cc.samlab.classroom.ui.courses.CourseCard
 import cc.samlab.classroom.ui.courses.CoursesScreen
 import cc.samlab.classroom.ui.courses.CourseDetailsScreen
 
-private enum class Destination { Home, Settings, Login, Courses, CourseDetails }
+private enum class Destination { Home, Settings, Login, Courses, CourseDetails, AvatarEditor }
 
 @Composable
 fun ClassroomApp() {
@@ -82,8 +83,11 @@ fun ClassroomApp() {
     }
     val goBack = {
         if (!auth.busy) {
-            destination = if (destination == Destination.CourseDetails) Destination.Courses
-                else Destination.Home
+            destination = when (destination) {
+                Destination.CourseDetails -> Destination.Courses
+                Destination.AvatarEditor -> Destination.Login
+                else -> Destination.Home
+            }
         }
     }
     BackHandler(destination != Destination.Home) { goBack() }
@@ -100,6 +104,8 @@ fun ClassroomApp() {
                     onLogin = { destination = Destination.Login },
                     onSettings = { destination = Destination.Settings },
                     username = auth.user?.username,
+                    avatar = auth.user?.avatar,
+                    server = address,
                     onCourses = {
                         destination = if (auth.user?.role == "student") Destination.Courses
                             else Destination.Login
@@ -137,8 +143,16 @@ fun ClassroomApp() {
                         address = it
                     },
                 )
+                Destination.AvatarEditor -> if (auth.user != null) {
+                    androidx.compose.runtime.key(address, auth.user!!.id) {
+                        AvatarEditorScreen(address, auth.user?.avatar, auth.user!!.username, goBack,
+                            api = requireNotNull(api), onRefreshUser = { auth.restore() })
+                    }
+                } else {
+                    LaunchedEffect(Unit) { destination = Destination.Login }
+                }
                 Destination.Login -> if (auth.user != null) {
-                    AccountScreen(auth, goHome)
+                    AccountScreen(auth, goHome, onChangeAvatar = { destination = Destination.AvatarEditor })
                 } else {
                     LoginScreen(
                         hasBackend = api != null,
