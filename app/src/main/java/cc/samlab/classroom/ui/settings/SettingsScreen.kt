@@ -18,28 +18,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
 import cc.samlab.classroom.ui.components.EntryRow
-import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageLayout
 
 @Composable
 fun SettingsScreen(
     address: String,
     onBack: () -> Unit,
     onSaveAddress: (String) -> Unit,
+    onPrivacy: () -> Unit,
+    onBackgroundReminders: () -> Unit,
 ) {
     var showAddressDialog by rememberSaveable { mutableStateOf(false) }
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
-    ) {
-        PageHeader(stringResource(R.string.settings), onBack)
+    PageLayout(stringResource(R.string.settings), onBack) {
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         EntryRow(
             title = stringResource(R.string.backend_address),
             subtitle = address.ifEmpty { stringResource(R.string.not_configured) },
             icon = R.drawable.ic_server,
             onClick = { showAddressDialog = true },
         )
+        androidx.compose.foundation.layout.Spacer(Modifier.padding(6.dp))
+        EntryRow(title = stringResource(R.string.privacy), icon = R.drawable.ic_person, onClick = onPrivacy)
+        androidx.compose.foundation.layout.Spacer(Modifier.padding(6.dp))
+        EntryRow(title = stringResource(R.string.background_reminders), icon = R.drawable.ic_attendance_task, onClick = onBackgroundReminders)
+        }
     }
     if (showAddressDialog) {
         BackendAddressDialog(

@@ -10,6 +10,7 @@ import cc.samlab.classroom.data.ApiException
 import cc.samlab.classroom.data.ClassroomApi
 import cc.samlab.classroom.data.ClassroomUser
 import cc.samlab.classroom.data.decodeCaptcha
+import cc.samlab.classroom.notifications.AttendanceReminderService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,8 @@ class LoginState(
     private val scope: CoroutineScope,
 ) {
     var user by mutableStateOf<ClassroomUser?>(null)
+        private set
+    var initialRestoreComplete by mutableStateOf(api == null)
         private set
     var captcha by mutableStateOf<Bitmap?>(null)
         private set
@@ -49,6 +52,7 @@ class LoginState(
                     user = null
                     api.logout()
                 } else user = restored
+                initialRestoreComplete = true
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -96,6 +100,7 @@ class LoginState(
                     loadCaptcha()
                 } else {
                     user = signedIn
+                    initialRestoreComplete = true
                     captcha = null
                     onSuccess()
                 }
@@ -121,7 +126,9 @@ class LoginState(
             error = null
             try {
                 client.logout()
+                AttendanceReminderService.stop(context)
                 user = null
+                initialRestoreComplete = true
                 busy = false
                 onSuccess()
             } catch (cancelled: CancellationException) {

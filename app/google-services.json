@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569962333237",
+    "project_id": "classroom-attendance-2026",
+    "storage_bucket": "classroom-attendance-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569962333237:android:1170a2703d0677c04b5d7c",
+        "android_client_info": {
+          "package_name": "cc.samlab.classroom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd2aRIXapBt-pl4wi-ev0RnqgS17UCBWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

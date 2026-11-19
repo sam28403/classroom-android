@@ -30,7 +30,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
-import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageLayout
 
 @Composable
 fun LoginScreen(
@@ -55,14 +55,8 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .imePadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
-    ) {
-        PageHeader(stringResource(R.string.login), onBack)
+    PageLayout(stringResource(R.string.login), onBack) {
+        Column(Modifier.weight(1f).imePadding().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Column(
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -111,6 +105,7 @@ fun LoginScreen(
                     Text(stringResource(R.string.configure_backend))
                 }
             }
+        }
         }
     }
 }

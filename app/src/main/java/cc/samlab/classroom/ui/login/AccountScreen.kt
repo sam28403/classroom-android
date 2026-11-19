@@ -19,18 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cc.samlab.classroom.R
-import cc.samlab.classroom.ui.components.PageHeader
+import cc.samlab.classroom.ui.components.PageLayout
+import cc.samlab.classroom.ui.components.EntryRow
 
 @Composable
-fun AccountScreen(state: LoginState, onBack: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
+fun AccountScreen(state: LoginState, onBack: () -> Unit, onChangeAvatar: () -> Unit = {}) {
+    PageLayout(stringResource(R.string.account), onBack) {
+        Column(
+        modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        PageHeader(stringResource(R.string.account), onBack)
+        ) {
         Text(
             state.user?.username.orEmpty(),
             style = MaterialTheme.typography.headlineSmall,
@@ -56,6 +54,12 @@ fun AccountScreen(state: LoginState, onBack: () -> Unit) {
                 }
             }
         }
+        EntryRow(
+            title = stringResource(R.string.change_avatar),
+            icon = R.drawable.ic_person,
+            subtitle = stringResource(R.string.avatar_entry_note),
+            onClick = onChangeAvatar,
+        )
         state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Button(
             onClick = { state.logout(onBack) },
@@ -63,6 +67,7 @@ fun AccountScreen(state: LoginState, onBack: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(stringResource(if (state.busy) R.string.signing_out else R.string.logout))
+        }
         }
     }
 }

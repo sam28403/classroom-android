@@ -20,36 +20,60 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import cc.samlab.classroom.R
 
+// Adapted from sam28403/CRTicket-Android SettingsHeader and its nested-scroll layout.
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun PageHeader(
+fun PageLayout(
     title: String,
     onBack: () -> Unit,
     action: @Composable () -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit,
 ) {
+    val behavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)
+            .nestedScroll(behavior.nestedScrollConnection),
     ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    painterResource(R.drawable.ic_arrow_back),
-                    contentDescription = stringResource(R.string.back),
+        TwoRowsTopAppBar(
+            title = { expanded ->
+                Text(
+                    title,
+                    modifier = if (expanded) Modifier.padding(start = 8.dp, bottom = 32.dp)
+                        else Modifier.padding(start = 16.dp),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = if (expanded) 36.sp else 20.sp,
+                        lineHeight = if (expanded) 44.sp else 28.sp,
+                        fontWeight = FontWeight.Normal,
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-            }
-            action()
-        }
-        Text(
-            title,
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(horizontal = 8.dp).semantics { heading() },
+            },
+            navigationIcon = {
+                FilledTonalIconButton(onClick = onBack, Modifier.padding(start = 8.dp).size(40.dp)) {
+                    Icon(painterResource(R.drawable.ic_arrow_back),
+                        stringResource(R.string.back), Modifier.size(20.dp))
+                }
+            },
+            actions = { action() },
+            collapsedHeight = 56.dp,
+            expandedHeight = 179.dp,
+            windowInsets = WindowInsets(0, 0, 0, 0),
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                scrolledContainerColor = MaterialTheme.colorScheme.surface,
+            ),
+            scrollBehavior = behavior,
         )
+        content()
     }
 }
 
@@ -60,6 +84,7 @@ fun EntryRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    leadingContent: (@Composable () -> Unit)? = null,
 ) {
     Surface(
         onClick = onClick,
@@ -72,7 +97,9 @@ fun EntryRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            Surface(
+            if (leadingContent != null) {
+                leadingContent()
+            } else Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.secondaryContainer,
             ) {
