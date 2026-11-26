@@ -11,6 +11,8 @@ build/
 local.properties
 
 # Generated packages and diagnostics
+/app/debug/
+/app/release/
 *.apk
 *.aab
 *.apks
