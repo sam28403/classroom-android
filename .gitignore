@@ -22,6 +22,7 @@ local.properties
 /.task/
 
 # Local credentials and signing files
+/app/google-services.json
 .env
 .env.*
 !.env.example

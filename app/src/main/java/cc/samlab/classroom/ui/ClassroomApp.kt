@@ -42,8 +42,6 @@ import cc.samlab.classroom.ui.login.LoginScreen
 import cc.samlab.classroom.ui.login.LoginState
 import cc.samlab.classroom.ui.settings.SettingsScreen
 import cc.samlab.classroom.ui.settings.PrivacyScreen
-import cc.samlab.classroom.ui.settings.BackgroundReminderScreen
-import cc.samlab.classroom.notifications.AttendanceReminderService
 import cc.samlab.classroom.ui.avatar.AvatarEditorScreen
 import cc.samlab.classroom.ui.attendance.AttendanceScreen
 import kotlinx.coroutines.launch
@@ -54,7 +52,7 @@ import cc.samlab.classroom.ui.courses.CourseCard
 import cc.samlab.classroom.ui.courses.CoursesScreen
 import cc.samlab.classroom.ui.courses.CourseDetailsScreen
 
-private enum class Destination { Home, Settings, Privacy, BackgroundReminders, Login, Courses, CourseDetails, AvatarEditor, Attendance }
+private enum class Destination { Home, Settings, Privacy, Login, Courses, CourseDetails, AvatarEditor, Attendance }
 
 @Composable
 fun ClassroomApp() {
@@ -99,9 +97,6 @@ fun ClassroomApp() {
                 ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
                 !notificationPrefs.getBoolean("permission_asked", false)) askNotifications = true
         }
-        auth.user?.takeIf { it.role == "student" }?.let { user ->
-            runCatching { AttendanceReminderService.restore(context, address, user.id) }
-        }
     }
     DisposableEffect(auth, courses, context) {
         val lifecycle = (context as? LifecycleOwner)?.lifecycle
@@ -123,7 +118,6 @@ fun ClassroomApp() {
                 Destination.CourseDetails -> Destination.Courses
                 Destination.AvatarEditor -> Destination.Login
                 Destination.Privacy -> Destination.Settings
-                Destination.BackgroundReminders -> Destination.Settings
                 else -> Destination.Home
             }
         }
@@ -204,16 +198,12 @@ fun ClassroomApp() {
                     address = address,
                     onBack = goHome,
                     onSaveAddress = {
-                        if (it != address) AttendanceReminderService.stop(context)
                         settings.address = it
                         address = it
                     },
                     onPrivacy = { destination = Destination.Privacy },
-                    onBackgroundReminders = { destination = Destination.BackgroundReminders },
                 )
                 Destination.Privacy -> PrivacyScreen(api = if (auth.user?.role == "student") api else null,
-                    onBack = { destination = Destination.Settings }, onLogin = { destination = Destination.Login })
-                Destination.BackgroundReminders -> BackgroundReminderScreen(address, auth.user?.id,
                     onBack = { destination = Destination.Settings }, onLogin = { destination = Destination.Login })
                 Destination.AvatarEditor -> if (auth.user != null) {
                     androidx.compose.runtime.key(address, auth.user!!.id) {
