@@ -10,7 +10,6 @@ import cc.samlab.classroom.data.ApiException
 import cc.samlab.classroom.data.ClassroomApi
 import cc.samlab.classroom.data.ClassroomUser
 import cc.samlab.classroom.data.decodeCaptcha
-import cc.samlab.classroom.notifications.AttendanceReminderService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -126,7 +125,6 @@ class LoginState(
             error = null
             try {
                 client.logout()
-                AttendanceReminderService.stop(context)
                 user = null
                 initialRestoreComplete = true
                 busy = false
