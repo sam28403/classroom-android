@@ -11,7 +11,9 @@ if (file("google-services.json").exists()) {
 android {
     namespace = "cc.samlab.classroom"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 1
+        }
     }
 
     defaultConfig {

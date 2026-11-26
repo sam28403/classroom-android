@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <path android:name="chalkboard" android:pathData="M33 32 H75 Q82 32 82 39 V58 Q82 64 76 64 H32 Q26 64 26 58 V39 Q26 32 33 32 Z" android:fillColor="#000000" android:fillAlpha="0.22" />
+    <path android:name="window-light" android:pathData="M30 38 Q30 37 31 37.5 L37 41 V46 L30 42.5 Z" android:fillColor="#000000" android:fillAlpha="0.34" />
+    <path android:name="ledge" android:pathData="M72.5 60.5 H79" android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="1.4" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeAlpha="0.56" />
+    <path android:name="scan-corners" android:pathData="M38 45 V41 Q38 37 42 37 H46 M62 37 H66 Q70 37 70 41 V45 M38 62 V66 Q38 70 42 70 H46 M62 70 H66 Q70 70 70 66 V62" android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="2.7" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:name="student" android:pathData="M54 40 C60.2 40 64 44.6 64 50.2 C64 54.6 62.1 58.0 58.9 60.1 C63 61.4 66.4 63.7 67.5 66.8 Q67.9 68.2 66.4 68.2 H41.6 Q40.1 68.2 40.5 66.8 C41.6 63.7 45 61.4 49.1 60.1 C45.9 58 44 54.6 44 50.2 C44 44.6 47.8 40 54 40 Z" android:fillColor="#000000" />
+    <path android:name="confirmation" android:pathData="M78.5 62.4 C81.9 62.4 84.6 65.1 84.6 68.5 C84.6 71.9 81.9 74.6 78.5 74.6 C75.1 74.6 72.4 71.9 72.4 68.5 C72.4 65.1 75.1 62.4 78.5 62.4 Z M75.2 68.1 Q75.7 67.6 76.2 68.1 L77.6 69.5 L80.6 66.5 Q81.1 66 81.6 66.5 L81.9 66.8 Q82.4 67.3 81.9 67.8 L78.2 71.5 Q77.6 72 77 71.5 L74.9 69.4 Q74.4 68.9 74.9 68.4 Z" android:fillColor="#000000" android:fillType="evenOdd" />
+</vector>
